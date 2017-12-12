@@ -35,7 +35,7 @@ repositories {
 
 
 dependencies {
-	c// 该依赖对于编译发行是必须的
+	// 该依赖对于编译发行是必须的
 	compile('org.springframework.boot:spring-boot-starter-web')
 
 	// 添加 Thymeleaf 的依赖

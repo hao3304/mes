@@ -10,10 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -40,6 +37,11 @@ public class UserController {
         Page<User> page = userService.ListUser(pageable);
 
         return new Response("0","",page.getTotalElements(), page.getContent());
+    }
+
+    @PostMapping
+    public Response saveOrUpdate(User user) {
+        return new Response("0","新增成功！", userService.saveOrUpdateUser(user));
     }
 
 }
