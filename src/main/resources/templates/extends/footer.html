@@ -7,8 +7,23 @@
 <body>
 
 <div th:fragment="footer">
-
     <script src="/static/plugins/layui/layui.js"></script>
+    <script>
+
+        layui.define(['jquery'],function (exports) {
+            var $ = layui.jquery;
+
+            $.delete = function (url) {
+                return $.ajax({
+                    contentType:'application/json',
+                    url:url,
+                    type:'DELETE'
+                })
+            }
+        })
+
+
+    </script>
 </div>
 
 </body>

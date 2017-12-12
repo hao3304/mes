@@ -4,12 +4,10 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 public class User implements UserDetails {
@@ -25,6 +23,17 @@ public class User implements UserDetails {
 
     @NotEmpty(message = "密码不能为空")
     private String password;
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+    @OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
+    private List<Role> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -76,4 +85,6 @@ public class User implements UserDetails {
     public void setPassword(String password) {
         this.password = password;
     }
+
+
 }

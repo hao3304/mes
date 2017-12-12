@@ -429,3 +429,6 @@ button {
 .yzit-app .layui-elem-quote{
     margin-bottom: 0;
 }
+.layui-tree li .layui-tree-spread, .layui-tree li a{
+    line-height: 26px;
+}

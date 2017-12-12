@@ -10,9 +10,9 @@
         "url": "user.html"
     }, {
         "id": "8",
-        "title": "表单",
+        "title": "权限管理",
         "icon": "&#xe63c;",
-        "url": "form.html"
+        "url": "authority.html"
     }, {
         "id": "9",
         "title": "导航栏",

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html layout:decorator="extends/layout">
+<head>
+    <meta charset="UTF-8" />
+    <title ></title>
+</head>
+<body layout:fragment="content" class="yzit-app">
+   <div>
+       <fieldset class="layui-elem-field layui-field-title" >
+           <blockquote class="layui-elem-quote">
+               <div  class="layui-form layui-form-pane">
+                   <div class="layui-form-item" style="margin-bottom: 0;">
+                       <div class="layui-input-inline">
+                           <button class="layui-btn layui-btn-normal" id="addMenu">
+                               <i class="layui-icon">&#xe654;</i>
+                               新增
+                           </button>
+                       </div>
+                   </div>
+               </div>
+           </blockquote>
+       </fieldset>
+       <div>
+           <div id="treeTable"></div>
+       </div>
+   </div>
+</body>
+</html>
+<script type="text/html" id="formTpl">
+    <form class="layui-form" action="" style="max-width: 400px;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">名称</label>
+            <div class="layui-input-block">
+                <input type="hidden" name="id" value="{{d.id || ''}}" >
+                <input type="text" name="name" value="{{d.name || ''}}" required lay-verType="tips"  lay-verify="required" placeholder="请输入名称" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">父级</label>
+            <div class="layui-input-block">
+                <select name="pid">
+                    {{# layui.each(d.selectList,function(index, item){  }}
+                        <option value="{{item.id}}">{{ item.name }}</option>
+                    {{# }); }}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">权限标识</label>
+            <div class="layui-input-block">
+                <input type="text" name="ident" value="{{d.ident || ''}}" required lay-verType="tips"  lay-verify="required" placeholder="请输入权限标识" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">类型</label>
+            <div class="layui-input-block">
+                <input type="radio" name="type" value="Menu" title="菜单" checked="">
+                <input type="radio" name="type" value="Button" title="按钮">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">URL路径</label>
+            <div class="layui-input-block">
+                <input type="text" name="url" value="{{d.url || ''}}"  placeholder="请输入URL路径" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formSubmit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                <a class="layui-btn layui-btn-primary btn-cancel"  >取消</a>
+            </div>
+        </div>
+    </form>
+</script>
+<script type="text/html" id="tableBar">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-xs" lay-event="add">添加子菜单</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" onclick="onDel({{d.id}},'{{d.name}}')">删除</a>
+</script>
+<script>
+
+
+    function transTree(data) {
+        var menus = [];
+        for(var i=0;i<data.length;i++) {
+            var item = data[i];
+            if(!item.pid) {
+                item.children = [];
+                menus.push(item);
+            }
+        }
+        var loop = function(item){
+            for(var i in data) {
+                var child = data[i];
+                if(item.id == child.pid) {
+                    if(!item.children) {
+                        item.children = [];
+                    }
+                    item.children.push(child);
+                    loop(child);
+                }
+            }
+        }
+        for(var i=0;i<menus.length;i++) {
+            var item = menus[i];
+            loop(item);
+        }
+        return menus;
+    }
+    
+    function transSelect(data) {
+        var select = [{name:'根目录',id:0}];
+
+        var getPrefix = function (level) {
+            var str = [];
+            for(var i=0;i<level;i++) {
+                str.push("└─ ");
+            }
+            return str.join("");
+        }
+
+        var loop = function (data,level) {
+            for(var i in data) {
+                var item = data[i];
+                select.push({name:getPrefix(level)+item.name,id:item.id});
+                if(item.children&&item.children.length>0&&item.type == "Menu") {
+                    loop(item.children,level+1)
+                }
+            }
+        }
+
+        for(var i in data) {
+            var level = 1;
+            var item = data[i];
+            if(item.type == "Menu") {
+                select.push({name:"└─ "+item.name,id:item.id});
+                if(item.children&&item.children.length >0) {
+                    loop(item.children,level+1);
+                }
+            }
+        }
+        return select;
+    }
+    
+    layui.use(['tree','table', 'layer', 'form','laytpl'], function(){
+        var layer = layui.layer ,laytpl = layui.laytpl;
+        var form = layui.form;
+        var table = layui.table;
+        $ = layui.jquery;
+        var treeData,treeTable;
+        var layout = [
+            {name: '名称', treeNodes: true, headerClass: 'value_col', colClass: 'value_col', style: 'width: 40%'},
+            {name: '权限标识', treeNodes: false, field:"ident"},
+            {name: 'URL', treeNodes: false, field:"url" ,render:function (row) {
+                    return row.url ||'';
+                }},
+            {name: '类型', treeNodes: false, field:"type"},
+            {name: '操作', treeNodes: false, render:function (row) {
+                    return laytpl(tableBar.innerHTML).render(row)
+                }}
+        ];
+
+       var renderTreeData = function () {
+           $.get('/authority/list.json').success(function (rep) {
+               treeData = transTree(rep.data);
+               $("#treeTable").children().remove();
+               treeTable = layui.treeGird({
+                   elem: '#treeTable',   //传入元素选择器
+                   nodes:treeData,
+                   layout:layout,
+                   spreadable:true
+               });
+           })
+       };
+
+        renderTreeData();
+
+        /**
+         * 新增按钮事件绑定
+         */
+        $("#addMenu").on("click",function () {
+            var selectList = transSelect(treeData);
+            layer.open({
+                content:laytpl(formTpl.innerHTML).render({selectList:selectList}),
+                area: ['100%', '100%'],
+                anim:2,
+                btn:null,
+                title:'新增权限'
+            });
+            form.render();
+        })
+
+        /**
+         * 取消表单事件
+         */
+        $(".yzit-app").delegate('.btn-cancel','click',function () {
+            layer.closeAll();
+        });
+        /**
+         * 提交表单
+         */
+
+        form.on('submit(formSubmit)', function(data){
+            $.post('/authority',data.field).success(function (rep) {
+                if(rep.code == 0) {
+                    layer.msg(rep.msg,{offset: 't'});
+                    renderTreeData();
+                }else{
+                    alert(rep.msg);
+                }
+            })
+            return false;
+        });
+
+        window.onDel= function(id,name) {
+            layer.confirm('是否要删除权限（'+name+'）?',{icon:3,title:'提示'},function () {
+                $.delete("/authority/" + id).success(function (rep) {
+                    if(rep.code == 0) {
+                        layer.msg(rep.msg,{offset: 't'});
+                        renderTreeData();
+                    }else{
+                        alert(rep.msg);
+                    }
+                })
+            })
+        }
+
+    });
+</script>
