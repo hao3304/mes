@@ -40,7 +40,7 @@
             <div class="layui-input-block">
                 <select name="pid">
                     {{# layui.each(d.selectList,function(index, item){  }}
-                        <option value="{{item.id}}">{{ item.name }}</option>
+                        <option value="{{item.id}}" {{ d.pid==item.id?"selected":"" }}  >{{ item.name }}</option>
                     {{# }); }}
                 </select>
             </div>
@@ -54,8 +54,8 @@
         <div class="layui-form-item">
             <label class="layui-form-label">类型</label>
             <div class="layui-input-block">
-                <input type="radio" name="type" value="Menu" title="菜单" checked="">
-                <input type="radio" name="type" value="Button" title="按钮">
+                <input type="radio" name="type" value="Menu" title="菜单" {{ d.type=="Menu"?"checked":"" }}  >
+                <input type="radio" name="type" value="Button" title="按钮" {{ d.type=="Button"?"checked":"" }} >
             </div>
         </div>
         <div class="layui-form-item">
@@ -74,13 +74,15 @@
     </form>
 </script>
 <script type="text/html" id="tableBar">
-    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-xs" lay-event="add">添加子菜单</a>
+    <a class="layui-btn layui-btn-xs" onclick="onEdit({{d.id}})" >编辑</a>
+    <a class="layui-btn layui-btn-xs" onclick="onAddChild({{d.id}})">添加子节点</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" onclick="onDel({{d.id}},'{{d.name}}')">删除</a>
 </script>
 <script>
 
-
+    /**
+     * 递归转换数据
+     */
     function transTree(data) {
         var menus = [];
         for(var i=0;i<data.length;i++) {
@@ -148,10 +150,13 @@
         var form = layui.form;
         var table = layui.table;
         $ = layui.jquery;
-        var treeData,treeTable;
+        var treeData,treeTable,sourceData;
         var layout = [
             {name: '名称', treeNodes: true, headerClass: 'value_col', colClass: 'value_col', style: 'width: 40%'},
             {name: '权限标识', treeNodes: false, field:"ident"},
+            {name: '图标', treeNodes: false, field:"icon",render:function (row) {
+                return row.icon ||'';
+            }},
             {name: 'URL', treeNodes: false, field:"url" ,render:function (row) {
                     return row.url ||'';
                 }},
@@ -163,6 +168,7 @@
 
        var renderTreeData = function () {
            $.get('/authority/list.json').success(function (rep) {
+               sourceData = rep.data;
                treeData = transTree(rep.data);
                $("#treeTable").children().remove();
                treeTable = layui.treeGird({
@@ -180,15 +186,7 @@
          * 新增按钮事件绑定
          */
         $("#addMenu").on("click",function () {
-            var selectList = transSelect(treeData);
-            layer.open({
-                content:laytpl(formTpl.innerHTML).render({selectList:selectList}),
-                area: ['100%', '100%'],
-                anim:2,
-                btn:null,
-                title:'新增权限'
-            });
-            form.render();
+            openForm({type:"Menu"});
         })
 
         /**
@@ -197,10 +195,10 @@
         $(".yzit-app").delegate('.btn-cancel','click',function () {
             layer.closeAll();
         });
+
         /**
          * 提交表单
          */
-
         form.on('submit(formSubmit)', function(data){
             $.post('/authority',data.field).success(function (rep) {
                 if(rep.code == 0) {
@@ -213,6 +211,28 @@
             return false;
         });
 
+        /**
+         * 打开表单
+         * @param obj
+         */
+        function openForm(obj) {
+            var selectList = transSelect(treeData);
+            layer.open({
+                content:laytpl(formTpl.innerHTML).render($.extend({selectList:selectList},obj)),
+                area: ['100%', '100%'],
+                anim:2,
+                btn:null,
+                title:'新增权限'
+            });
+            form.render();
+        }
+
+        /**
+         * 删除事件
+         * @param id
+         * @param name
+         */
+
         window.onDel= function(id,name) {
             layer.confirm('是否要删除权限（'+name+'）?',{icon:3,title:'提示'},function () {
                 $.delete("/authority/" + id).success(function (rep) {
@@ -224,6 +244,20 @@
                     }
                 })
             })
+        }
+        
+        window.onAddChild = function (pid) {
+            openForm({pid:pid,type:"Menu"});
+        }
+
+        window.onEdit = function (id) {
+            var target;
+            for(var i=0;i<sourceData.length;i++) {
+                if(sourceData[i].id == id) {
+                    target = sourceData[i];
+                }
+            }
+            openForm(target);
         }
 
     });
