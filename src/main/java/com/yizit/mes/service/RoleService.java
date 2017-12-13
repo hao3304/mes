@@ -1,6 +1,8 @@
 package com.yizit.mes.service;
 
 import com.yizit.mes.domain.Role;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -13,12 +15,15 @@ public interface RoleService {
      * 查询所有角色
      * @return
      */
-    List<Role> listRole();
+    Page<Role> listRole(Pageable pageable);
+
+    List<Role> findAll();
 
     Role saveOrUpdateRole(Role role);
 
     void removeRole(Long id);
 
-    boolean hasChildren(Long pid);
+    Role findByName(String name);
 
+    Role findById(Long id);
 }

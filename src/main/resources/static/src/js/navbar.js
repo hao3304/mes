@@ -129,10 +129,10 @@ layui.define(['layer', 'laytpl', 'element'], function(exports) {
                     '{{# var hasChildren = item.children!==undefined && item.children.length>0; }}',
                     '{{# if(hasChildren){ }}',
                     '<a href="javascript:;">',
-                    '{{# if (item.icon.indexOf("fa-") !== -1) { }}',
-                    '<i class="fa {{item.icon}}" aria-hidden="true"></i>',
+                    '{{# if (item.icon&&item.icon.indexOf("icon-") !== -1) { }}',
+                    '<i class="iconfont {{item.icon}}" aria-hidden="true"></i>',
                     '{{# } else { }}',
-                    '<i class="layui-icon">{{item.icon}}</i>',
+                    '<i class="layui-icon">{{item.icon||""}}</i>',
                     '{{# } }}',
                     '<span> {{item.title}}</span>',
                     '</a>',
@@ -141,10 +141,10 @@ layui.define(['layer', 'laytpl', 'element'], function(exports) {
                     '{{# layui.each(children,function(childIndex, child){ }}',
                     '<dd>',
                     '<a href="javascript:;" kit-target data-options="{url:\'{{child.url}}\',icon:\'{{child.icon}}\',title:\'{{child.title}}\',id:\'{{child.id}}\'}">',
-                    '{{# if (child.icon.indexOf("fa-") !== -1) { }}',
-                    '<i class="fa {{child.icon}}" aria-hidden="true"></i>',
+                    '{{# if (child.icon&&child.icon.indexOf("icon-") !== -1) { }}',
+                    '<i class="iconfont {{child.icon}}" aria-hidden="true"></i>',
                     '{{# } else { }}',
-                    '<i class="layui-icon">{{child.icon}}</i>',
+                    '<i class="layui-icon">{{child.icon||""}}</i>',
                     '{{# } }}',
                     '<span> {{child.title}}</span>',
                     '</a>',
@@ -153,10 +153,10 @@ layui.define(['layer', 'laytpl', 'element'], function(exports) {
                     '</dl>',
                     '{{# }else{ }}',
                     '<a href="javascript:;" kit-target data-options="{url:\'{{item.url}}\',icon:\'{{item.icon}}\',title:\'{{item.title}}\',id:\'{{item.id}}\'}">',
-                    '{{# if (item.icon.indexOf("fa-") !== -1) { }}',
-                    '<i class="fa {{item.icon}}" aria-hidden="true"></i>',
+                    '{{# if (item.icon&&item.icon.indexOf("icon-") !== -1) { }}',
+                    '<i class="iconfont {{item.icon}}" aria-hidden="true"></i>',
                     '{{# } else { }}',
-                    '<i class="layui-icon">{{item.icon}}</i>',
+                    '<i class="layui-icon">{{item.icon||""}}</i>',
                     '{{# } }}',
                     '<span> {{item.title}}</span>',
                     '</a>',
@@ -182,6 +182,9 @@ layui.define(['layer', 'laytpl', 'element'], function(exports) {
                         navbarLoadIndex && layer.close(navbarLoadIndex);
                     },
                     success: function(res) {
+                        for(var i in res) {
+                            res[i].title = res[i].name;
+                        }
                         _data = res;
                     }
                 };

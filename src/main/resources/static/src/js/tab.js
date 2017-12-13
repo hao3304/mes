@@ -92,7 +92,7 @@ layui.define(['jquery', 'element', 'nprogress', 'utils'], function(exports) {
                     '<ul class="layui-tab-title">',
                     '<li class="layui-this" lay-id="-1" data-url="' + _config.mainUrl + '"><i class="layui-icon">&#xe68e;</i> 控制面板</li>',
                     '</ul>',
-                    '<div class="kit-tab-tool">操作&nbsp;<i class="fa fa-caret-down"></i></div>',
+                    '<div class="kit-tab-tool">操作&nbsp;<i class="iconfont icon-caret-down"></i></div>',
                     '<div class="kit-tab-tool-body layui-anim layui-anim-upbit">',
                     '<ul>',
                     '<li class="kit-item" data-target="refresh">刷新当前选项卡</li>',
@@ -240,11 +240,11 @@ layui.define(['jquery', 'element', 'nprogress', 'utils'], function(exports) {
             options = options || {
                 id: new Date().getTime(),
                 title: '新标签页',
-                icon: 'fa-file',
+                icon: 'icon-file',
                 url: '404.html'
             };
             var title = options.title,
-                icon = options.icon,
+                icon = options.icon=="null"?"":options.icon,
                 url = options.url,
                 id = options.id;
             if (that.tabExists(id)) {
@@ -256,10 +256,10 @@ layui.define(['jquery', 'element', 'nprogress', 'utils'], function(exports) {
                 loadIndex = that.load();
             var titleHtm = ['<li class="layui-this" lay-id="' + id + '" data-url="' + url + '">'];
             if (icon) {
-                if (icon.indexOf('fa-') !== -1) {
-                    titleHtm.push('<i class="fa ' + icon + '" aria-hidden="true"></i>');
+                if (icon.indexOf('icon-') !== -1) {
+                    titleHtm.push('<i class="iconfont ' + icon + '" aria-hidden="true"></i>');
                 } else {
-                    titleHtm.push('<i class="layui-icon">' + icon + '</i>');
+                    titleHtm.push('<i class="layui-icon">' + icon||"" + '</i>');
                 }
             }
             titleHtm.push('&nbsp;' + title);

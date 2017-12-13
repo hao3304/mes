@@ -12,6 +12,7 @@ public class Role {
     private Long id;
 
     @NotEmpty(message = "角色名称不能为空")
+    @Column(unique = true)
     private String name;
 
     @ManyToMany(cascade = CascadeType.DETACH,fetch = FetchType.EAGER)

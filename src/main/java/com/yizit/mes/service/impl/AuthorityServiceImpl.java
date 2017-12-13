@@ -35,5 +35,8 @@ public class AuthorityServiceImpl implements AuthorityService{
          return authorityRepository.existsByPid(pid);
     }
 
-
+    @Override
+    public Authority findById(Long id) {
+        return authorityRepository.findOne(id);
+    }
 }

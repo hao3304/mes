@@ -10,14 +10,14 @@
         "url": "user.html"
     }, {
         "id": "8",
-        "title": "权限管理",
+        "title": "菜单管理",
         "icon": "&#xe63c;",
         "url": "authority.html"
     }, {
         "id": "9",
-        "title": "导航栏",
+        "title": "角色管理",
         "icon": "&#xe628;",
-        "url": "nav.html"
+        "url": "role.html"
     }, {
         "id": "10",
         "title": "列表四",

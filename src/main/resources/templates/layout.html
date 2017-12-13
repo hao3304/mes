@@ -1,15 +1,9 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <title>MES</title>
-    <link rel="stylesheet" href="/static/plugins/layui/css/layui.css" media="all" />
-    <link rel="stylesheet" href="/static/plugins/font-awesome/css/font-awesome.min.css" media="all"/>
-    <link rel="stylesheet" href="/static/src/css/app.css" media="all"/>
+<head th:replace="extends/header :: header">
+    <meta charset="UTF-8" />
+    <title></title>
 </head>
-
 <body>
 <div class="layui-layout layui-layout-admin kit-layout-admin">
     <div class="layui-header">
@@ -21,20 +15,21 @@
             <!--<li class="layui-nav-item"><a href="javascript:;" id="pay"><i class="fa fa-gratipay" aria-hidden="true"></i> 捐赠我</a></li>-->
             <li class="layui-nav-item">
                 <a href="javascript:;">
-                    <img src="http://m.zhengjinfan.cn/images/0.jpg" class="layui-nav-img" /> Van
+                    <img src="http://m.zhengjinfan.cn/images/0.jpg" class="layui-nav-img" />
+                    <span th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}"></span>
                 </a>
                 <dl class="layui-nav-child">
                     <dd><a href="javascript:;">基本资料</a></dd>
                     <dd><a href="javascript:;">安全设置</a></dd>
                 </dl>
             </li>
-            <li class="layui-nav-item"><a href="javascript:;"><i class="fa fa-sign-out" aria-hidden="true"></i> 注销</a></li>
+            <li class="layui-nav-item"><a href="/logout"><i class="iconfont icon-zhuxiao" aria-hidden="true"></i> 注销</a></li>
         </ul>
     </div>
 
     <div class="layui-side layui-bg-black kit-side">
         <div class="layui-side-scroll">
-            <div class="kit-side-fold"><i class="fa fa-navicon" aria-hidden="true"></i></div>
+            <div class="kit-side-fold"><i class="iconfont icon-navicon" aria-hidden="true"></i></div>
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree" lay-filter="kitNavbar" kit-navbar="">
             </ul>
@@ -53,7 +48,11 @@
     </div>
 </div>
 <script src="/static/plugins/layui/layui.js"></script>
-<script>
+<script th:inline="javascript">
+    var MENU = [[${menu}]];
+    for(var m in MENU) {
+        MENU[m].title = MENU[m].name;
+    }
     var message;
     layui.config({
         base: '/static/src/js/'

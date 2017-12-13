@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 public class Authority implements GrantedAuthority {
 
-    enum Type {Menu,Button}
+    public enum Type {Menu,Button}
 
     @Id
     @GeneratedValue
@@ -21,6 +21,9 @@ public class Authority implements GrantedAuthority {
     private String ident;
 
     private String url;
+
+
+    private String icon;
 
     public Type getType() {
         return type;
@@ -83,4 +86,13 @@ public class Authority implements GrantedAuthority {
     public void setUrl(String url) {
         this.url = url;
     }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
 }

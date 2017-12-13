@@ -13,7 +13,7 @@
                        <div class="layui-input-inline">
                            <button class="layui-btn layui-btn-normal" id="addMenu">
                                <i class="layui-icon">&#xe654;</i>
-                               新增
+                               新增节点
                            </button>
                        </div>
                    </div>
@@ -46,9 +46,9 @@
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">权限标识</label>
+            <label class="layui-form-label">节点标识</label>
             <div class="layui-input-block">
-                <input type="text" name="ident" value="{{d.ident || ''}}" required lay-verType="tips"  lay-verify="required" placeholder="请输入权限标识" class="layui-input">
+                <input type="text" name="ident" value="{{d.ident || ''}}" required lay-verType="tips"  lay-verify="required" placeholder="请输入节点标识" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
@@ -56,6 +56,12 @@
             <div class="layui-input-block">
                 <input type="radio" name="type" value="Menu" title="菜单" {{ d.type=="Menu"?"checked":"" }}  >
                 <input type="radio" name="type" value="Button" title="按钮" {{ d.type=="Button"?"checked":"" }} >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">图标</label>
+            <div class="layui-input-block">
+                <input type="text" name="icon" value="{{d.icon || ''}}"  placeholder="请输入图标class" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
@@ -77,6 +83,9 @@
     <a class="layui-btn layui-btn-xs" onclick="onEdit({{d.id}})" >编辑</a>
     <a class="layui-btn layui-btn-xs" onclick="onAddChild({{d.id}})">添加子节点</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" onclick="onDel({{d.id}},'{{d.name}}')">删除</a>
+</script>
+<script>
+
 </script>
 <script>
 
@@ -144,24 +153,24 @@
         }
         return select;
     }
-    
+
     layui.use(['tree','table', 'layer', 'form','laytpl'], function(){
         var layer = layui.layer ,laytpl = layui.laytpl;
         var form = layui.form;
         var table = layui.table;
-        $ = layui.jquery;
+        var $ = layui.jquery;
         var treeData,treeTable,sourceData;
         var layout = [
-            {name: '名称', treeNodes: true, headerClass: 'value_col', colClass: 'value_col', style: 'width: 40%'},
-            {name: '权限标识', treeNodes: false, field:"ident"},
+            {name: '名称', treeNodes: true, headerClass: 'value_col', colClass: 'value_col',style: 'width: 40%;' },
+            {name: '节点标识', treeNodes: false, field:"ident"},
             {name: '图标', treeNodes: false, field:"icon",render:function (row) {
-                return row.icon ||'';
+                return row.icon ?'<i class="iconfont '+row.icon+'"></i>':'';
             }},
             {name: 'URL', treeNodes: false, field:"url" ,render:function (row) {
                     return row.url ||'';
                 }},
             {name: '类型', treeNodes: false, field:"type"},
-            {name: '操作', treeNodes: false, render:function (row) {
+            {name: '操作',style: 'width: 200px;', treeNodes: false, render:function (row) {
                     return laytpl(tableBar.innerHTML).render(row)
                 }}
         ];
@@ -215,15 +224,19 @@
          * 打开表单
          * @param obj
          */
-        function openForm(obj) {
+        function openForm(obj,option) {
             var selectList = transSelect(treeData);
-            layer.open({
+            var params = {
                 content:laytpl(formTpl.innerHTML).render($.extend({selectList:selectList},obj)),
                 area: ['100%', '100%'],
                 anim:2,
                 btn:null,
-                title:'新增权限'
-            });
+                title:'新增节点'
+            };
+            if(option) {
+                params = $.extend(params,option);
+            }
+            layer.open(params);
             form.render();
         }
 
@@ -234,7 +247,7 @@
          */
 
         window.onDel= function(id,name) {
-            layer.confirm('是否要删除权限（'+name+'）?',{icon:3,title:'提示'},function () {
+            layer.confirm('是否要删除节点（'+name+'）?',{icon:3,title:'提示'},function () {
                 $.delete("/authority/" + id).success(function (rep) {
                     if(rep.code == 0) {
                         layer.msg(rep.msg,{offset: 't'});
@@ -247,7 +260,12 @@
         }
         
         window.onAddChild = function (pid) {
-            openForm({pid:pid,type:"Menu"});
+            openForm({pid:pid,type:"Menu"},{
+                area: ["500px", '100%'],
+                offset: 'r',
+                btn:null,
+                shadeClose:true,
+                anim:5});
         }
 
         window.onEdit = function (id) {
@@ -257,7 +275,13 @@
                     target = sourceData[i];
                 }
             }
-            openForm(target);
+            openForm(target,{
+                area: ["500px", '100%'],
+                offset: 'r',
+                btn:null,
+                title:'编辑节点',
+                shadeClose:true,
+                anim:5});
         }
 
     });

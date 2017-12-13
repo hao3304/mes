@@ -130,7 +130,21 @@ layui.define("jquery", function(e) {
             }
             var p;
             if (sxa){
-                n.spread = true, p = false, treeNode.isOpened = true;
+
+                if(treeNode.item.authority) {
+                    var len = treeNode.item.authority.split(":").length;
+                    if(len==1) {
+                        n.spread = true, p = false, treeNode.isOpened = true;
+                    }
+                    else if(len ==2) {
+                        n.spread = false, p = false, treeNode.isOpened = false;
+                    }
+                    else{
+                        p = treeNode.parentId == 'root' ? null : treeNode.parentId;
+                    }
+                }else{
+                    n.spread = true, p = false, treeNode.isOpened = true;
+                }
             }else{
                 p = treeNode.parentId == 'root' ? null : treeNode.parentId;
             }

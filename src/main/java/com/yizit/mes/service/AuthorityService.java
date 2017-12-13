@@ -20,4 +20,6 @@ public interface AuthorityService {
     void removeAuthority(Long id);
 
     boolean hasChildren(Long pid);
+
+    Authority findById(Long id);
 }

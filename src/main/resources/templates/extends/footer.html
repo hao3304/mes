@@ -13,11 +13,44 @@
         layui.define(['jquery'],function (exports) {
             var $ = layui.jquery;
 
+            $.get = function (url) {
+                return $.ajax({
+                    contentType:'application/json',
+                    url:url,
+                    type:'get',
+                }).error(function (rep) {
+                    layer.alert(rep.responseJSON.message);
+                })
+            }
+
+            $.post = function (url,data) {
+                return $.ajax({
+                    url:url,
+                    type:'post',
+                    data:data
+                }).error(function (rep) {
+                    layer.alert(rep.responseJSON.message);
+                })
+            }
+
             $.delete = function (url) {
                 return $.ajax({
                     contentType:'application/json',
                     url:url,
                     type:'DELETE'
+                }).error(function (rep) {
+                    layer.alert(rep.responseJSON.message);
+                })
+            };
+
+            $.put = function (url,data) {
+                return $.ajax({
+                    contentType:'application/json',
+                    url:url,
+                    type:'PUT',
+                    data:data
+                }).error(function (rep) {
+                    layer.alert(rep.responseJSON.message);
                 })
             }
         })

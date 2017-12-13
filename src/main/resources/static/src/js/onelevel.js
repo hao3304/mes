@@ -54,12 +54,12 @@ layui.define(['jquery', 'laytpl', 'element'], function(exports) {
                 _remote = _config.remote, //远程参数配置
                 _tpl = [
                     '{{# layui.each(d,function(index, item){ }}',
-                    '<li class="layui-nav-item">',
+                    '<li class="layui-nav-item {{index==0?"layui-this":""}}">',
                     '<a href="javascript:;" data-title="{{item.title}}" data-icon="{{item.icon}}" data-id="{{item.id}}" >',
-                    '{{# if (item.icon.indexOf("fa-") !== -1) { }}',
-                    '<i class="fa {{item.icon}}" aria-hidden="true"></i>',
+                    '{{# if (item.icon&&item.icon.indexOf("icon-") !== -1) { }}',
+                    '<i class="iconfont {{item.icon}}" aria-hidden="true"></i>',
                     '{{# } else { }}',
-                    '<i class="layui-icon">{{item.icon}}</i>',
+                    '<i class="layui-icon">{{item.icon || ""}}</i>',
                     '{{# } }}',
                     '<span> {{item.title}}</span>',
                     '</a>',
@@ -116,6 +116,5 @@ layui.define(['jquery', 'laytpl', 'element'], function(exports) {
             return that;
         }
     };
-
     exports('onelevel', oneLevel);
 });

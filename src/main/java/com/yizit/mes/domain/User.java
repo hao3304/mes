@@ -2,10 +2,12 @@ package com.yizit.mes.domain;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,20 +26,18 @@ public class User implements UserDetails {
     @NotEmpty(message = "密码不能为空")
     private String password;
 
-    public List<Role> getRoles() {
-        return roles;
-    }
 
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
-    }
-
-    @OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
-    private List<Role> roles;
+    @OneToOne(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
+    private Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        List<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>();
+        List<Authority> authorities = this.role.getAuthorityList();
+        for(GrantedAuthority authority: authorities) {
+            simpleGrantedAuthorities.add(new SimpleGrantedAuthority(authority.getAuthority()));
+        }
+        return simpleGrantedAuthorities;
     }
 
     @Override
@@ -52,22 +52,22 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 
     public Long getId() {
@@ -86,5 +86,12 @@ public class User implements UserDetails {
         this.password = password;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
 
 }
