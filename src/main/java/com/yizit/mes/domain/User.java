@@ -1,22 +1,16 @@
 package com.yizit.mes.domain;
 
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 @Entity
-public class User implements UserDetails {
+public class User {
 
     @Id
     @GeneratedValue
     private Long id;
+
 
     @NotEmpty(message = "账号不能为空")
     @Size(min = 3,max = 20)
@@ -29,46 +23,6 @@ public class User implements UserDetails {
 
     @OneToOne(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
     private Role role;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>();
-        List<Authority> authorities = this.role.getAuthorityList();
-        for(GrantedAuthority authority: authorities) {
-            simpleGrantedAuthorities.add(new SimpleGrantedAuthority(authority.getAuthority()));
-        }
-        return simpleGrantedAuthorities;
-    }
-
-    @Override
-    public String getPassword() {
-        return this.password;
-    }
-
-    @Override
-    public String getUsername() {
-        return this.username;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 
     public Long getId() {
         return id;
@@ -92,6 +46,19 @@ public class User implements UserDetails {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public boolean isRoot() {
+        return "root".equals(this.username);
     }
 
 }

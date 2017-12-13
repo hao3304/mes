@@ -2,10 +2,11 @@ package com.yizit.mes.controller;
 
 import com.yizit.mes.domain.Authority;
 import com.yizit.mes.domain.User;
+import com.yizit.mes.security.SecurityUser;
+import com.yizit.mes.security.SecurityUtrl;
+import com.yizit.mes.service.impl.AuthorityServiceImpl;
 import com.yizit.mes.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,9 @@ public class MainController {
     @Autowired
     private UserServiceImpl userService;
 
+    @Autowired
+    private AuthorityServiceImpl authorityService;
+
     @GetMapping("/")
     public String root() {
         return "redirect:/index";
@@ -26,12 +30,16 @@ public class MainController {
     @GetMapping("/index")
     public String index(Model model) {
        //根据用户权限获取菜单
-        Object principal =  SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
-        String username =((UserDetails)principal).getUsername();
-        User user = userService.findByUserName(username);
+        SecurityUser securityUser = SecurityUtrl.getUser();
 
-        List<Authority> authorities = user.getRole().getAuthorityList();
+        List<Authority> authorities;
+        if(SecurityUtrl.isRoot()) {
+            authorities = authorityService.listAuthority();
+        }else{
+            User user = userService.findByUserName(securityUser.getUsername());
+            authorities = user.getRole().getAuthorityList();
+        }
+
         List<Authority> menu = new ArrayList<>();
         for(Authority authority : authorities) {
             if(authority.getType() == Authority.Type.Menu && authority.getPid() == 0) {

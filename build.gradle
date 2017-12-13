@@ -61,8 +61,10 @@ dependencies {
 
 	// 该依赖对于编译测试是必须的，默认包含编译产品依赖和编译时依
 	testCompile('org.springframework.boot:spring-boot-starter-test')
-
+	compile group: 'de.codecentric', name: 'spring-boot-admin-server', version:'1.5.0'
+	compile group: 'de.codecentric', name: 'spring-boot-admin-server-ui', version:'1.5.0'
 	compile group: 'io.springfox', name: 'springfox-swagger2', version:'2.2.2'
 	compile group: 'io.springfox', name: 'springfox-swagger-ui', version:'2.2.2'
+
 
 }

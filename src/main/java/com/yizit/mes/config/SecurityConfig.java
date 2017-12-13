@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -19,7 +20,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String KEY = "yizit";
 
     @Autowired
-    private UserServiceImpl userDetailsService;
+    private UserDetailsService userDetailsService;
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -45,10 +46,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/login").failureUrl("/login-error")
+                .loginPage("/login").failureUrl("/login-error").defaultSuccessUrl("/index")
                 .usernameParameter("username").passwordParameter("password").permitAll()
                 .and().logout().logoutUrl("/logout").permitAll()
-                .and().rememberMe().key(KEY)
+                .and().rememberMe().key(KEY).tokenValiditySeconds(3600)
                 .and().csrf().disable();
     }
 
