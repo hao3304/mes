@@ -11,7 +11,7 @@
             <div  class="layui-form layui-form-pane">
                 <div class="layui-form-item" style="margin-bottom: 0;">
                     <div class="layui-input-inline">
-                        <button class="layui-btn layui-btn-normal" id="addUser">
+                        <button class="layui-btn layui-btn-normal" id="addUser" sec:authorize="hasAuthority('system:role:add')">
                             <i class="layui-icon">&#xe654;</i>
                             新增角色
                         </button>
@@ -45,9 +45,9 @@
     </form>
 </script>
 <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-xs" lay-event="auth">权限设置</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs" sec:authorize="hasAuthority('system:role:edit')" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-xs" sec:authorize="hasAuthority('system:role:auth')" lay-event="auth">权限设置</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" sec:authorize="hasAuthority('system:role:del')" lay-event="del">删除</a>
 </script>
 <script type="text/html" id="authTpl">
     <div   class="layui-form" action="" style="max-width: 400px;">
@@ -105,7 +105,8 @@
          * 提交表单
          */
         form.on('submit(formDemo)', function(data){
-            $.post('/role',data.field).success(function (rep) {
+            var type = data.field.id?'put':'post';
+            $.type('/role',data.field).success(function (rep) {
                 if(rep.code == 0) {
                     layer.msg(rep.msg,{offset: 't'});
                     roleTable.reload();

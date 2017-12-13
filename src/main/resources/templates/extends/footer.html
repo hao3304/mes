@@ -7,9 +7,9 @@
 <body>
 
 <div th:fragment="footer">
+    <script src="https://cdn.hcharts.cn/highcharts/highcharts.js"></script>
     <script src="/static/plugins/layui/layui.js"></script>
     <script>
-
         layui.define(['jquery'],function (exports) {
             var $ = layui.jquery;
 
@@ -45,7 +45,6 @@
 
             $.put = function (url,data) {
                 return $.ajax({
-                    contentType:'application/json',
                     url:url,
                     type:'PUT',
                     data:data

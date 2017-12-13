@@ -68,6 +68,8 @@ public class RoleController {
             return ResponseEntity.ok().body(new Response("400","已经相同名称角色！"));
         }
 
+        role.setId(null);
+
         try {
             roleService.saveOrUpdateRole(role);
         } catch (ConstraintViolationException e) {
@@ -75,6 +77,32 @@ public class RoleController {
         }
         return ResponseEntity.ok().body(new Response("0","操作成功！", role));
     }
+
+
+    @PutMapping
+    @ApiOperation(value = "编辑角色",notes = "编辑角色")
+    @PreAuthorize("hasAuthority('system:role:edit')")
+    public ResponseEntity<Response> update(Role role) {
+
+        Role t = roleService.findByName(role.getName());
+        if(t != null && role.getId() == null) {
+            return ResponseEntity.ok().body(new Response("400","已经相同名称角色！"));
+        }
+        if(role.getId() == null) {
+            return ResponseEntity.ok().body(new Response("400","未找到对象！"));
+        }
+
+        try {
+            roleService.saveOrUpdateRole(role);
+        } catch (ConstraintViolationException e) {
+            return ResponseEntity.ok().body(new Response("400","处理失败！", ConstraintViolationExceptionHandler.getMessage(e)));
+        }
+        return ResponseEntity.ok().body(new Response("0","操作成功！", role));
+    }
+
+
+
+
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "删除角色",notes = "根据id删除角色")
@@ -91,6 +119,7 @@ public class RoleController {
 
     @PostMapping("/{id}")
     @ApiOperation(value = "权限管理",notes = "权限管理")
+    @PreAuthorize("hasAuthority('system:role:auth')")
     public ResponseEntity<Response>  roleAndAuth(@PathVariable("id") Long id,@RequestParam("authority[]") Long[] auths) {
         List<Authority> authorities = new ArrayList<>();
         for(Long aid : auths) {
