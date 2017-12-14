@@ -106,7 +106,7 @@
          */
         form.on('submit(formDemo)', function(data){
             var type = data.field.id?'put':'post';
-            $.type('/role',data.field).success(function (rep) {
+            $[type]('/role',data.field).success(function (rep) {
                 if(rep.code == 0) {
                     layer.msg(rep.msg,{offset: 't'});
                     roleTable.reload();

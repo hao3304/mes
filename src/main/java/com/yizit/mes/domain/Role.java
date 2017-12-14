@@ -16,7 +16,7 @@ public class Role {
     @Column(unique = true)
     private String name;
 
-    @ManyToMany(cascade = CascadeType.DETACH,fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
     private List<Authority> authorityList;
 
     protected Role() {
