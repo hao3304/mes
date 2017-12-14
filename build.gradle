@@ -53,6 +53,9 @@ dependencies {
 	// 添加 MySQL连接驱动 的依赖
 	compile('mysql:mysql-connector-java')
 
+	//添加 Oracle连接驱动依赖
+	compile files('lib/ojdbc8.jar')
+
 	// 添加   Thymeleaf Spring Security 依赖，与 Thymeleaf 版本一致都是 3.x
 	compile('org.thymeleaf.extras:thymeleaf-extras-springsecurity4:3.0.2.RELEASE')
 
@@ -61,10 +64,9 @@ dependencies {
 
 	// 该依赖对于编译测试是必须的，默认包含编译产品依赖和编译时依
 	testCompile('org.springframework.boot:spring-boot-starter-test')
-	compile group: 'de.codecentric', name: 'spring-boot-admin-server', version:'1.5.0'
-	compile group: 'de.codecentric', name: 'spring-boot-admin-server-ui', version:'1.5.0'
+
 	compile group: 'io.springfox', name: 'springfox-swagger2', version:'2.2.2'
 	compile group: 'io.springfox', name: 'springfox-swagger-ui', version:'2.2.2'
 
-
+	compile "org.projectlombok:lombok"
 }

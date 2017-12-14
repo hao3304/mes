@@ -6,10 +6,9 @@ import org.springframework.security.core.GrantedAuthority;
 import javax.persistence.*;
 
 @Entity
+@Table(name="t_authority")
 public class Authority implements GrantedAuthority {
-
     public enum Type {Menu,Button}
-
     @Id
     @GeneratedValue
     private Long id;
@@ -21,7 +20,6 @@ public class Authority implements GrantedAuthority {
     private String ident;
 
     private String url;
-
 
     private String icon;
 

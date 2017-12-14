@@ -1,8 +1,6 @@
 package com.yizit.mes.controller;
 
-import com.yizit.mes.domain.Role;
 import com.yizit.mes.domain.User;
-import com.yizit.mes.service.impl.RoleServiceImpl;
 import com.yizit.mes.service.impl.UserServiceImpl;
 import com.yizit.mes.util.ConstraintViolationExceptionHandler;
 import com.yizit.mes.vo.Response;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.ConstraintViolationException;
-import java.util.List;
 
 
 @RestController
